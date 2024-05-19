@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+import 'package:rent_nest_flutter/LOGIN.dart';
+import 'WelcomePage1.dart';
+
+
+
+
+class WelcomePage3 extends StatefulWidget {
+  const WelcomePage3({Key? key}) : super(key: key);
+
+  @override
+  State<WelcomePage3> createState() => _WelcomePage3();
+}
+
+class _WelcomePage3 extends State<WelcomePage3> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("Photos/photo3.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 115,
+            bottom: 50,
+            child: SizedBox(
+              width: 130,
+              height: 35,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WelcomePage1(),
+                      ));
+                },
+                child: Text('Next', style: TextStyle(fontSize: 20,color:Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF90604C),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            top: 35,
+            left: 280,
+            child: TextButton(
+              onPressed: () {  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const login(),
+                  ));
+              },
+              child: Text('Skip',style: TextStyle(fontSize: 18)),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
