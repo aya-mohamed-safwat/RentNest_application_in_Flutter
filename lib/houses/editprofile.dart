@@ -52,6 +52,7 @@ class _ProfileState extends State<editprofile> {
     );
 
     request.files.add(multipartRequest);
+    request.fields['userId'] = userId;
     request.fields['entity_type'] = "USER_AVATAR";
     request.fields['entity_id'] = userId;
 
@@ -123,12 +124,7 @@ void editProfile(String name , String email,  String number ,String password ,dy
            userMap['number']=number;
 
            print(" Response body: JSON: ${response.body}");
-           Navigator.push(
-             context,
-             MaterialPageRoute(
-               builder: (context) => Profile(),
-             ),
-           );
+
 
          }
          else {

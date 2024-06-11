@@ -32,6 +32,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     fetchData();
+    fetchImageByEntityIdAndUserId();
     fetchProfileImageById();
   }
 //=====================================================================
@@ -51,15 +52,17 @@ class _ProfileState extends State<Profile> {
   }
 //=====================================================================
 //=====================================================================
-  Future<void> fetchHousesImageById() async {
+  Future<void> fetchImageByEntityIdAndUserId() async {
     for(int i = 1; i <= length.length ; i++) {
       try {
-        List<dynamic> fetchedImages = await imageapi.fetchImageById(count, "HOUSE");
+        List<dynamic> fetchedImages = await imageapi.fetchImageByEntityIdAndUserId(count, "HOUSE" ,userMap['id']);
         while(fetchedImages.isEmpty){
           count++;
-          fetchedImages = await imageapi.fetchImageById(count, "HOUSE");
+          fetchedImages = await imageapi.fetchImageByEntityIdAndUserId(count, "HOUSE", userMap['id']);
         }
         String firstImage = fetchedImages.first;
+        print(fetchedImages);
+        print(firstImage);
         Map<String, String> map = {"image": firstImage};
         setState(() {
           housesImages.add(map);
@@ -95,7 +98,7 @@ class _ProfileState extends State<Profile> {
       setState(() {
        // userHouses = fetchedUserHouses;
         length =fetchedUserHouses;
-         fetchHousesImageById();
+        // fetchImageByEntityIdAndUserId();
 
       });
     } catch (e) {

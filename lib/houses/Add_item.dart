@@ -100,7 +100,7 @@ class _ImagePickerDemoState extends State<ImagePickerDemo> {
   }
 //===============================================================================
 
-  Future<dynamic> postImage(List<XFile>? images,String imageId) async {
+  Future<dynamic> postImage(List<XFile>? images,String imageId , String userId) async {
 
     List<Uint8List> bytes=[] ;
     List<dynamic> name=[] ;
@@ -123,6 +123,7 @@ class _ImagePickerDemoState extends State<ImagePickerDemo> {
       );
 
       request.files.add(multipartRequest);
+      request.fields['userId'] = userId;
       request.fields['entity_type'] = "HOUSE";
       request.fields['entity_id'] = imageId;
 
@@ -483,8 +484,9 @@ return SafeArea(
                     );
                     print(houseId);
 
+
                     if (houseId != null) {
-                      postImage(images, houseId.toString());
+                      postImage(images, houseId.toString(),userId.toString());
                     } else {
                       print("addItem returned null");
                     }
