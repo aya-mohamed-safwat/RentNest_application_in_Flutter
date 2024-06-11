@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:rent_nest_flutter/Select_property.dart';
 import 'package:http/http.dart' as http;
+import 'LOGIN.dart';
 import 'text form.dart';
 
 class sign extends StatefulWidget {
@@ -63,7 +64,7 @@ class _signState extends State<sign> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const SelectProperty(),
+                    builder: (context) => const login(),
                   ),
                 );
                 updateText(response.body);

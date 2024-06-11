@@ -23,7 +23,8 @@ List<String> texts = ["RentNest",
   "Galala city",
   "Nubian Village in Aawan",
 ];
-
+int count1 =1;
+List<dynamic> fetchedImages=[];
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -88,7 +89,11 @@ class _HomeState extends State<Home> {
   Future<void> fetchHousesImageById() async {
     for(int i = 1 ; i <= length.length ; i++) {
       try {
-        List<dynamic> fetchedImages = await imageapi.fetchImageById(i, "HOUSE");
+        List<dynamic> fetchedImages = await imageapi.fetchImageById(count1, "HOUSE");
+        while(fetchedImages.isEmpty){
+          count1++;
+          fetchedImages = await imageapi.fetchImageById(count1, "HOUSE");
+        }
         String firstImage = fetchedImages.first;
         Map<String, String> map = {"image": firstImage};
         setState(() {
@@ -99,10 +104,10 @@ class _HomeState extends State<Home> {
       catch (e) {
         print(e.toString());
       }
+      count1++;
     }
     gridMap =length;
-    print(housesImages);
-    //fetchData();
+    count1 =1;
   }
 
 
@@ -268,8 +273,9 @@ class _HomeState extends State<Home> {
                             Row(
                               children: [
                                 IconButton(
-                                  onPressed: () {
-                                    fetchHouseImages(index+1);
+
+                                  onPressed: () async {
+                                    fetchedImages = await imageApi.fetchImageById(gridMap.elementAt(index)['houseId'], "HOUSE");
                                     getData(gridMap.elementAt(index));
                                      Navigator.push(
                                       context,

@@ -6,20 +6,8 @@ import 'package:rent_nest_flutter/houses/Home.dart';
 import 'houses/ImageAPI.dart';
 
 
+ImageAPI imageApi =new ImageAPI();
 
-ImageAPI imageapi =new ImageAPI();
-
-List<dynamic> fetchedImages=[];
-Future<void> fetchHouseImages(int houseId) async {
-
-  try {
-
-      fetchedImages = await imageapi.fetchImageById(houseId, "HOUSE");
-  }
-  catch (e) {
-    print(e.toString());
-  }
-}
 
 Map<dynamic , dynamic> data={};
 Map<dynamic , dynamic> userInfo={};

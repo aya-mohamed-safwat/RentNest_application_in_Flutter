@@ -6,12 +6,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import '../LOGIN.dart';
 import 'Api.dart';
+import 'EditHouse.dart';
 import 'ImageAPI.dart';
 import 'editprofile.dart';
 
 String imageBytes="";
-
-
+int count =1;
+List<dynamic> ImagesForEditing=[];
 class Profile extends StatefulWidget {
   @override
   State<Profile> createState() => _ProfileState();
@@ -32,16 +33,18 @@ class _ProfileState extends State<Profile> {
     super.initState();
     fetchData();
     fetchProfileImageById();
-    // fetchHousesImageById();
   }
 //=====================================================================
 //=====================================================================
   Future<void> fetchProfileImageById() async {
     try {
       List<dynamic> fetchedImages = await imageapi.fetchImageById(userMap['id'],"USER_AVATAR");
-      setState(() {
-        imageBytes = fetchedImages.last;
-      });
+      if(fetchedImages.isNotEmpty) {
+        setState(() {
+          imageBytes = fetchedImages.last;
+        });
+      }
+      else{ imageBytes = "";}
     } catch (e) {
       print(e.toString());
     }
@@ -49,23 +52,40 @@ class _ProfileState extends State<Profile> {
 //=====================================================================
 //=====================================================================
   Future<void> fetchHousesImageById() async {
-    for(int i = 1 ; i <= length.length ; i++) {
+    for(int i = 1; i <= length.length ; i++) {
       try {
-        List<dynamic> fetchedImages = await imageapi.fetchImageById(i, "HOUSE");
+        List<dynamic> fetchedImages = await imageapi.fetchImageById(count, "HOUSE");
+        while(fetchedImages.isEmpty){
+          count++;
+          fetchedImages = await imageapi.fetchImageById(count, "HOUSE");
+        }
         String firstImage = fetchedImages.first;
         Map<String, String> map = {"image": firstImage};
         setState(() {
           housesImages.add(map);
-         // userHouses =length;
         });
       }
       catch (e) {
         print(e.toString());
       }
+      count++;
     }
     userHouses =length;
-    print(housesImages);
-    //fetchData();
+    count =1;
+  }
+//=====================================================================
+//=====================================================================
+
+  Future<void> deleteHousesImage(List names) async {
+
+    for (String item in names)  {
+      try {
+        await imageapi.deleteImages(item);
+
+      } catch (e) {
+        print(e.toString());
+      }
+    }
   }
 //=====================================================================
 //=====================================================================
@@ -84,6 +104,7 @@ class _ProfileState extends State<Profile> {
   }
 //=====================================================================
 //=====================================================================
+
   @override
   Widget build(BuildContext context) {
 
@@ -132,12 +153,10 @@ class _ProfileState extends State<Profile> {
             children: [
               CircleAvatar(
                 radius: 64,
-                backgroundImage: imageBytes.isEmpty
-                    ? AssetImage('Photos/profilelogo.png')as ImageProvider<Object>
-                    : NetworkImage(imageBytes),
-
+                backgroundImage: imageBytes.isNotEmpty
+                    ? NetworkImage(imageBytes)
+                    : AssetImage('Photos/profilelogo.png') as ImageProvider<Object>,
               ),
-
             ],
           ),
             ),
@@ -170,7 +189,6 @@ class _ProfileState extends State<Profile> {
         itemBuilder: (_, index) {
           return SingleChildScrollView(
             child: Container(
-
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(
                   16.0,
@@ -222,13 +240,87 @@ class _ProfileState extends State<Profile> {
                         const SizedBox(
                           height: 8.0,
                         ),
+
                         Row(
                           children: [
-                            IconButton(
-                              onPressed: () {
-                                print('Index: $index');
+
+                            PopupMenuButton<String>(
+
+                              onSelected: (value) {
+                                if (value == 'delete item') {
+                                  String getImageFileName(String imageUrl) {
+                                    Uri uri = Uri.parse(imageUrl);
+                                    return uri.pathSegments.last;
+                                  }
+                                  Future<void> getHouseImages() async {
+                                    for(int i = 1 ; i <= length.length ; i++) {
+                                      try {
+                                        List getImages = await imageapi.fetchImageById(userHouses.elementAt(index)['houseId'], "HOUSE");
+
+                                        List<String> imageFileNames = getImages.map((imageUrl) => getImageFileName(imageUrl)).toList();
+
+                                        await deleteHousesImage(imageFileNames);
+                                      } catch (e) {
+                                        print(e.toString());
+                                      }
+                                    }
+                                  }
+                                  getHouseImages();
+                                  Future<void> deleteHouse() async {
+                                    try {
+                                      String deleteHouse = await api.deleteItem(userHouses.elementAt(index)['houseId']);
+                                      // setState(() {
+                                      //   HouseImageById(userHouses.elementAt(index)['houseId']);
+                                      //   fetchData();
+                                      // });
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => Profile()), // Navigate to the contact page
+                                      );
+                                    } catch (e) {
+                                      print(e.toString());
+                                    }
+                                  }
+                                  deleteHouse();
+                                }
+
+                                Future<void> handleEditItem() async {
+                                  ImagesForEditing = await imageapi.fetchImageById(userHouses.elementAt(index)["houseId"], "HOUSE");
+                                  getHouseToUpdate(userHouses.elementAt(index));
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => EditHouse()), // Navigate to the contact page
+                                  );
+                                }
+                                if (value == 'edit item') {
+
+                                  handleEditItem();
+                                }
                               },
-                              icon: Icon(
+                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'edit item',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.edit),
+                                      SizedBox(width: 8), // Adjust spacing as needed
+                                      Text('edit item'),
+                                    ],
+                                  ),
+                                ),
+                                const PopupMenuItem<String>(
+                                    value: 'delete item',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.delete),
+                                        SizedBox(width: 8), // Adjust spacing as needed
+                                        Text('delete item'),
+                                      ],
+                                    )
+                                ),
+
+                              ],
+                              icon: const Icon(
                                 CupertinoIcons.ellipsis_circle,
                               ),
                             ),

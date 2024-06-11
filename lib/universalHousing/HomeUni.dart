@@ -272,7 +272,7 @@ class _HomeState extends State<HomeUni> {
                               children: [
                                 IconButton(
                                   onPressed: () {
-                                    fetchHouseImages(index+1);
+                                   // fetchHouseImages(index+1);
                                     getData(gridMap.elementAt(index));
                                      Navigator.push(
                                       context,

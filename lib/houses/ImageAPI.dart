@@ -57,32 +57,6 @@ class ImageAPI {
 
   }
 
-  //
-  // Future<void> fetchImage(String name) async {
-  //   try {
-  //
-  //     String apiUrl = 'https://rentnest.onrender.com/image/$name';
-  //
-  //     final response = await http.get(Uri.parse(apiUrl));
-  //
-  //     if (response.statusCode == 200) {
-  //
-  //       final Uint8List bytes = response.bodyBytes;
-  //
-  //       setState(() {
-  //         imageBytes = bytes;
-  //       });
-  //     } else {
-  //
-  //       print('Failed to fetch image. Status code: ${response.statusCode}');
-  //     }
-  //   } catch (error) {
-  //
-  //     print('Error: $error');
-  //   }
-  // }
-
-
 
 Future<List<dynamic>> fetchImageById(int entityId,String entityType) async {
   List<dynamic> images=[];
@@ -104,5 +78,31 @@ Future<List<dynamic>> fetchImageById(int entityId,String entityType) async {
   }
   return images;
 }
+
+
+
+  Future<String> deleteImages(String imageName) async {
+    String responseBody = "";
+    try {
+      final response = await http.delete(
+        Uri.parse('https://rentnest.onrender.com/image/deleteImage/$imageName'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (response.headers['content-type']!.toLowerCase().contains('application/json')) {
+          responseBody = jsonDecode(response.body);
+          print("Response body: JSON: $responseBody");
+        }
+      } else {
+        print("HTTP Error ${response.statusCode}: ${response.body}");
+      }
+    } catch (e) {
+      print("Exception occurred: $e");
+    }
+    return ("Response body: JSON: $responseBody");
+  }
 
 }

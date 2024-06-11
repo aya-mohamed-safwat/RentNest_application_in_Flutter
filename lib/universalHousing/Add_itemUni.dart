@@ -481,11 +481,9 @@ return SafeArea(
                       userId,
                       context,
                     );
-                    print(houseId);
 
                     if (houseId != null) {
                       postImage(images, houseId.toString());
-                      print("House added with ID: $houseId");
                     } else {
                       print("addItem returned null");
                     }

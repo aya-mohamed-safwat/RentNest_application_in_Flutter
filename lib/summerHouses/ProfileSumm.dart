@@ -56,7 +56,6 @@ class _ProfileState extends State<ProfileSumm> {
         Map<String, String> map = {"image": firstImage};
         setState(() {
           housesImages.add(map);
-         // userHouses =length;
         });
       }
       catch (e) {
@@ -64,8 +63,6 @@ class _ProfileState extends State<ProfileSumm> {
       }
     }
     userHouses =length;
-    print(housesImages);
-    //fetchData();
   }
 //=====================================================================
 //=====================================================================
