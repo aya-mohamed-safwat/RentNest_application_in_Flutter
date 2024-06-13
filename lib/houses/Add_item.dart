@@ -83,12 +83,6 @@ class _ImagePickerDemoState extends State<ImagePickerDemo> {
 
           houseResponse =responseBody;
 
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Profile(),
-            ),
-          );
         return houseResponse['houseId'];
       } else {
         print("HTTP Error ${response.statusCode}: ${response.body}");
@@ -130,6 +124,12 @@ class _ImagePickerDemoState extends State<ImagePickerDemo> {
       var response = await request.send();
 
       if (response.statusCode == 200) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Profile(),
+          ),
+        );
         print('Image uploaded successfully');
 
       } else {

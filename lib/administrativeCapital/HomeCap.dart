@@ -6,10 +6,10 @@ import 'package:flutter/rendering.dart';
 import 'package:rent_nest_flutter/houses/Api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../details.dart';
+import '../ImageAPI.dart';
+import '../houses/details.dart';
 import 'ApiCap.dart';
-
-import 'ImageAPICap.dart';
+import 'detailsCap.dart';
 
 List<String> picsList=[ "https://i.imgur.com/eGE1PDD.png"
   ,"https://images.unsplash.com/photo-1584719866406-c76ddee48493?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -25,7 +25,8 @@ List<String> texts = ["RentNest",
   "Galala city",
   "Nubian Village in Aawan",
 ];
-
+int countCap =1;
+List<dynamic> fetchedImagesCap=[];
 class HomeCap extends StatefulWidget {
   const HomeCap({Key? key}) : super(key: key);
 
@@ -84,35 +85,38 @@ class _HomeState extends State<HomeCap> {
   }
   List<Map<dynamic, dynamic>> length =[];
   List<Map<String, dynamic>> housesImages =[];
-  ImageAPICap imageapi =new ImageAPICap();
+  ImageAPI imageapi =new ImageAPI();
 
 
   Future<void> fetchHousesImageById() async {
-      for (int i = 1; i <= length.length; i++) {
-        try {
-          List<dynamic> fetchedImages = await imageapi.fetchImageById(
-              i, "SUMMER_HOUSE");
-          String firstImage = fetchedImages.first;
-          Map<String, String> map = {"image": firstImage};
-          setState(() {
-            housesImages.add(map);
-            // userHouses =length;
-          });
+    for(int i = 1 ; i <= length.length ; i++) {
+      try {
+        List<dynamic> fetchedImages = await imageapi.fetchImageById(countCap, "CAPITAL_HOUSE");
+        print(fetchedImages);
+        while(fetchedImages.isEmpty){
+          countCap++;
+          fetchedImages = await imageapi.fetchImageById(countCap, "CAPITAL_HOUSE");
         }
-        catch (e) {
-          print(e.toString());
-
+        String firstImage = fetchedImages.first;
+        Map<String, String> map = {"image": firstImage};
+        setState(() {
+          housesImages.add(map);
+          // userHouses =length;
+        });
       }
+      catch (e) {
+        print(e.toString());
+      }
+      countCap++;
     }
     gridMap =length;
-    print(housesImages);
-
+    countCap =1;
   }
 
 
   Future<void> fetchData() async {
     try {
-      List<Map<dynamic, dynamic>> fetchedUserHouses = await api.viewAllSummHouses();
+      List<Map<dynamic, dynamic>> fetchedUserHouses = await api.viewAllCapHouses();
       setState(() {
         length =fetchedUserHouses;
         fetchHousesImageById();
@@ -267,25 +271,26 @@ class _HomeState extends State<HomeCap> {
                             const SizedBox(
                               height: 8.0,
                             ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                   // fetchHouseImages(index+1);
-                                    getData(gridMap.elementAt(index));
-                                     Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => details(),
+                                Row(
+                                  children: [
+                                    IconButton(
+
+                                      onPressed: () async {
+                                        fetchedImagesCap = await imageApi.fetchImageById(gridMap.elementAt(index)['capitalHouseId'], "CAPITAL_HOUSE");
+                                        getDataCap(gridMap.elementAt(index));
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => detailsCap(),
+                                          ),
+                                        );
+                                      },
+                                      icon: Icon(
+                                        CupertinoIcons.ellipsis_circle,
                                       ),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    CupertinoIcons.ellipsis_circle,
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
                           ],
                         ),
                       ),

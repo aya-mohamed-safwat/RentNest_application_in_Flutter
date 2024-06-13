@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'SearchResultSumm.dart';
+
 class SearchScreenSumm extends StatefulWidget {
   @override
   State<SearchScreenSumm> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreenSumm> {
+  List<Map<dynamic, dynamic>> searchHouses =[];
 
   List<String> locations = [ 'Sharm El Sheik', 'Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
   String? selectedLocation = 'Sharm El Sheik';
@@ -17,7 +20,7 @@ class _SearchScreenState extends State<SearchScreenSumm> {
   double price =0.0;
   int bedRoom =0;
   int bathRoom =0;
-  List<dynamic> responseBody=[];
+  List<Map<dynamic, dynamic>> responseBody=[];
 
   double _currentValue = 20;
   double _currentValue2 = 20;
@@ -25,7 +28,7 @@ class _SearchScreenState extends State<SearchScreenSumm> {
   @override
   Widget build (BuildContext context){
 
-    void search(String? location , double size , double price ,int bathRoom , int bedRoom ,BuildContext context ) async {
+    Future<List<Map<dynamic, dynamic>>> search(String? location , double size , double price ,int bathRoom , int bedRoom ,BuildContext context ) async {
           try {
             final response = await http.get(
               Uri.parse('https://rentnest.onrender.com/rentNest/api/searchSummerHousesByFilter?'
@@ -42,21 +45,23 @@ class _SearchScreenState extends State<SearchScreenSumm> {
             if (response.statusCode == 200) {
               if (response.headers['content-type']!.toLowerCase().contains(
                   'application/json')) {
-                responseBody = jsonDecode(response.body);
-                print(" Response body: JSON: $responseBody");
+                List<dynamic> decodedResponse = jsonDecode(response.body);
+                searchHouses = decodedResponse.map((dynamic item) {
+                  if (item is Map<dynamic, dynamic>) {
+                    return item;
+                  } else {
+                    return {};
+                  }
+                }).toList();
               }
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const SearchResultSumm(),
-              //   ),
-              // );
             } else {
               print("HTTP Error ${response.statusCode}: ${response.body}");
             }
           } catch (e) {
             print(e.toString());
       }
+      print(searchHouses);
+          return searchHouses;
     }
 
 
@@ -364,6 +369,11 @@ style: ElevatedButton.styleFrom
               child: ElevatedButton(
                 onPressed: () {
                   search(selectedLocation, size, price, bathRoom, bedRoom, context);
+                  getSearchResultSumm(searchHouses);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchResultSumm()));
                 },
                 child: Text('Search'),
                 style: ElevatedButton.styleFrom

@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'SearchResultCap.dart';
+
 
 class SearchScreenCap extends StatefulWidget {
   @override
@@ -11,7 +13,7 @@ class SearchScreenCap extends StatefulWidget {
 }
 
 class _SearchScreenCapState extends State<SearchScreenCap> {
-
+  List<Map<dynamic, dynamic>> searchHouses =[];
   List<String> locations = [ 'الحي الاول R1', 'الحي الثاني R2', 'الحي الثالث R3', 'الحى الرابع R4','الحي االخامس R5', 'الحي السادس R6', 'الحي السابع R7', 'الحى الثامن R8'];
   String? selectedLocation = 'الحي الاول R1';
 
@@ -19,7 +21,7 @@ class _SearchScreenCapState extends State<SearchScreenCap> {
   double price =0.0;
   int bedRoom =0;
   int bathRoom =0;
-  List<dynamic> responseBody=[];
+  List<Map<dynamic, dynamic>>  responseBody=[];
 
   double _currentValue = 20;
   double _currentValue2 = 20;
@@ -27,38 +29,39 @@ class _SearchScreenCapState extends State<SearchScreenCap> {
   @override
   Widget build (BuildContext context){
 
-    void search(String? location , double size , double price ,int bathRoom , int bedRoom ,BuildContext context ) async {
-          try {
-            final response = await http.get(
-              Uri.parse('https://rentnest.onrender.com/rentNest/api/searchHousesByFilter?'
-                  'location=$location'
-                  '&size=$size'
-                  '&price=$price'
-                  '&bedroomsNum=$bedRoom'
-                  '&bathroomsNum=$bathRoom'),
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-            );
+    Future<List<Map<dynamic, dynamic>>> search(String? location , double size , double price ,int bathRoom , int bedRoom ,BuildContext context ) async {
+      try {
+        final response = await http.get(
+          Uri.parse('https://rentnest.onrender.com/rentNest/api/searchCapitalHousesByFilter?'
+              'location=$location'
+              '&size=$size'
+              '&price=$price'
+              '&bedroomsNum=$bedRoom'
+              '&bathroomsNum=$bathRoom'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+        );
 
-            if (response.statusCode == 200) {
-              if (response.headers['content-type']!.toLowerCase().contains(
-                  'application/json')) {
-                responseBody = jsonDecode(response.body);
-                print(" Response body: JSON: $responseBody");
+        if (response.statusCode == 200) {
+          if (response.headers['content-type']!.toLowerCase().contains(
+              'application/json')) {
+            List<dynamic> decodedResponse = jsonDecode(response.body);
+            searchHouses = decodedResponse.map((dynamic item) {
+              if (item is Map<dynamic, dynamic>) {
+                return item;
+              } else {
+                return {};
               }
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const SearchResultCap(),
-              //   ),
-              // );
-            } else {
-              print("HTTP Error ${response.statusCode}: ${response.body}");
-            }
-          } catch (e) {
-            print(e.toString());
+            }).toList();
+          }
+        } else {
+          print("HTTP Error ${response.statusCode}: ${response.body}");
+        }
+      } catch (e) {
+        print(e.toString());
       }
+      return searchHouses;
     }
 
 
@@ -366,6 +369,11 @@ style: ElevatedButton.styleFrom
               child: ElevatedButton(
                 onPressed: () {
                   search(selectedLocation, size, price, bathRoom, bedRoom, context);
+    getSearchResultCap(searchHouses);
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) => SearchResultCap()));
                 },
                 child: Text('Search'),
                 style: ElevatedButton.styleFrom

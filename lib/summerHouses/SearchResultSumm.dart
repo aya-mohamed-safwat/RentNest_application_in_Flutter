@@ -4,32 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:rent_nest_flutter/houses/Add_item.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
-import '../LOGIN.dart';
-import '../contact.dart';
-import 'details.dart';
-import 'Api.dart';
-import 'EditHouse.dart';
-import 'Home.dart';
+
 import '../ImageAPI.dart';
-import 'Profile.dart';
-import 'SearchScreen.dart';
-import 'editprofile.dart';
+import 'HomeSumm.dart';
+import 'detailsSumm.dart';
 
-String imageBytes="";
-int countSearch =1;
 
-List<Map<dynamic, dynamic>> searchResult =[];
-void getSearchResult(List<Map<dynamic, dynamic>> x){
-  searchResult =x ;
+String imageBytesSumm="";
+int countSearchSumm =1;
+
+List<Map<dynamic, dynamic>> searchResultSumm =[];
+void getSearchResultSumm(List<Map<dynamic, dynamic>> x){
+  searchResultSumm =x ;
 }
 
 
-class SearchResult extends StatefulWidget {
+class SearchResultSumm extends StatefulWidget {
   @override
-  State<SearchResult> createState() => _SearchResultState();
+  State<SearchResultSumm> createState() => _SearchResultSummState();
 }
 
-class _SearchResultState extends State<SearchResult> {
+class _SearchResultSummState extends State<SearchResultSumm> {
 
   @override
   void initState() {
@@ -47,10 +42,10 @@ class _SearchResultState extends State<SearchResult> {
   Future<void> fetchHousesImageById() async {
     for(int i = 1 ; i <= length.length ; i++) {
       try {
-        List<dynamic> fetchedImages = await imageapi.fetchImageById(countSearch, "HOUSE");
+        List<dynamic> fetchedImages = await imageapi.fetchImageById(countSearchSumm, "SUMMER_HOUSE");
         while(fetchedImages.isEmpty){
-          countSearch++;
-          fetchedImages = await imageapi.fetchImageById(countSearch, "HOUSE");
+          countSearchSumm++;
+          fetchedImages = await imageapi.fetchImageById(countSearchSumm, "SUMMER_HOUSE");
         }
         String firstImage = fetchedImages.first;
         Map<String, String> map = {"image": firstImage};
@@ -61,17 +56,17 @@ class _SearchResultState extends State<SearchResult> {
       catch (e) {
         print(e.toString());
       }
-      countSearch++;
+      countSearchSumm++;
     }
     gridSearch =length;
-    countSearch =1;
+    countSearchSumm =1;
   }
 //=====================================================================
 //=====================================================================
   Future<void> fetchlength() async {
     try {
       setState(() {
-        length =searchResult;
+        length =searchResultSumm;
         fetchHousesImageById();
 
       });
@@ -157,12 +152,12 @@ class _SearchResultState extends State<SearchResult> {
                           children: [
                             IconButton(
                               onPressed: () async {
-                                fetchedImages = await imageApi.fetchImageById(gridSearch.elementAt(index)['houseId'], "HOUSE");
-                                getData(gridSearch.elementAt(index));
+                                fetchedSummImages = await imageApiSumm.fetchImageById(gridSearch.elementAt(index)['summerHouseId'], "SUMMER_HOUSE");
+                                getDataSumm(gridSearch.elementAt(index));
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => details(),
+                                    builder: (context) => detailsSumm(),
                                   ),
                                 );
                               },

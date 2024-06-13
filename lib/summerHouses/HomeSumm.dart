@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../details.dart';
+import '../ImageAPI.dart';
+import '../houses/details.dart';
 import 'ApiSumm.dart';
-import 'ImageAPISumm.dart';
+import 'detailsSumm.dart';
 
 
 List<String> picsList=[ "https://i.imgur.com/eGE1PDD.png"
@@ -24,7 +25,7 @@ List<String> texts = ["RentNest",
   "Galala city",
   "Nubian Village in Aawan",
 ];
-
+List<dynamic> fetchedSummImages=[];
 class HomeSumm extends StatefulWidget {
   const HomeSumm({Key? key}) : super(key: key);
 
@@ -33,6 +34,8 @@ class HomeSumm extends StatefulWidget {
 }
 
 class _HomeState extends State<HomeSumm> {
+
+  int count1 =1;
 
 
   ApiSumm api =new ApiSumm();
@@ -83,29 +86,32 @@ class _HomeState extends State<HomeSumm> {
   }
   List<Map<dynamic, dynamic>> length =[];
   List<Map<String, dynamic>> housesImages =[];
-  ImageAPISumm imageapi =new ImageAPISumm();
+  ImageAPI imageapi =new ImageAPI();
 
 
   Future<void> fetchHousesImageById() async {
       for (int i = 1; i <= length.length; i++) {
         try {
-          List<dynamic> fetchedImages = await imageapi.fetchImageById(
-              i, "SUMMER_HOUSE");
+          List<dynamic> fetchedImages = await imageapi.fetchImageById(count1, "SUMMER_HOUSE");
+          while(fetchedImages.isEmpty){
+            count1++;
+            fetchedImages = await imageapi.fetchImageById(count1, "SUMMER_HOUSE");
+            print(count1);
+          }
           String firstImage = fetchedImages.first;
           Map<String, String> map = {"image": firstImage};
           setState(() {
             housesImages.add(map);
-            // userHouses =length;
           });
         }
         catch (e) {
           print(e.toString());
 
       }
+        count1++;
     }
     gridMap =length;
-    print(housesImages);
-
+      count1 =1;
   }
 
 
@@ -269,13 +275,13 @@ class _HomeState extends State<HomeSumm> {
                             Row(
                               children: [
                                 IconButton(
-                                  onPressed: () {
-                                  //  fetchHouseImages(index+1);
-                                    getData(gridMap.elementAt(index));
+                                  onPressed: () async {
+                                    fetchedSummImages = await imageApiSumm.fetchImageById(gridMap.elementAt(index)['summerHouseId'], "SUMMER_HOUSE");
+                                    getDataSumm(gridMap.elementAt(index));
                                      Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => details(),
+                                        builder: (context) => detailsSumm(),
                                       ),
                                     );
                                   },
@@ -294,6 +300,12 @@ class _HomeState extends State<HomeSumm> {
               );
             },
           ),
+              const Padding(
+                padding: EdgeInsets.only(
+                  top: 20,
+                ),
+
+              ),
             ],
           ),
         ),

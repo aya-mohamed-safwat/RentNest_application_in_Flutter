@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 
 import 'ProfileCap.dart';
 
-Map <String,dynamic> houseResponse ={'location': "", 'size': 0.0, 'bedroomsNum': 0,
+Map <String,dynamic> houseResponseCap ={'location': "", 'size': 0.0, 'bedroomsNum': 0,
   'bathroomsNum': 0, 'price': 0.0, 'availability': true, 'description':"" , 'houseId': 0};
 
 class ImagePickerDemoCap extends StatefulWidget {
@@ -59,7 +59,7 @@ class _ImagePickerDemoState extends State<ImagePickerDemoCap> {
       , int bedRoom ,String description , int userId ,BuildContext context ) async {
     try {
       final response = await http.post(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/addSummerHouse/$userId'),
+        Uri.parse('https://rentnest.onrender.com/rentNest/api/addCapitalHouse/$userId'),
         body: jsonEncode(<String, dynamic>{
           "location": location,
           "size": size,
@@ -81,26 +81,21 @@ class _ImagePickerDemoState extends State<ImagePickerDemoCap> {
           print(" Response body: JSON: $responseBody");
         }
 
-          houseResponse =responseBody;
+          houseResponseCap =responseBody;
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileCap(),
-          ),
-        );
-        return houseResponse['summerHouseId'];
+
+        return houseResponseCap['capitalHouseId'];
       } else {
         print("HTTP Error ${response.statusCode}: ${response.body}");
       }
     } catch (e) {
       print(e.toString());
     }
-    return houseResponse['summerHouseId'];
+    return houseResponseCap['capitalHouseId'];
   }
 //===============================================================================
 
-  Future<dynamic> postImage(List<XFile>? images,String imageId) async {
+  Future<dynamic> postImage(List<XFile>? images,String imageId, String userId) async {
 
     List<Uint8List> bytes=[] ;
     List<dynamic> name=[] ;
@@ -123,12 +118,19 @@ class _ImagePickerDemoState extends State<ImagePickerDemoCap> {
       );
 
       request.files.add(multipartRequest);
-      request.fields['entity_type'] = "SUMMER_HOUSE";
+      request.fields['userId'] = userId;
+      request.fields['entity_type'] = "CAPITAL_HOUSE";
       request.fields['entity_id'] = imageId;
 
       var response = await request.send();
 
       if (response.statusCode == 200) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfileCap(),
+          ),
+        );
         print('Image uploaded successfully');
 
       } else {
@@ -166,13 +168,6 @@ return SafeArea(
           )
               : Container(),
 
-          /* SizedBox(
-              width: 300,
-              height:300 ,
-              child: _image == null
-                  ? Center(child: const Text('No image selected' ))
-                  : Image.file(_image!),
-            ),*/
           const SizedBox(
             height: 10.0,
           ),
@@ -484,7 +479,7 @@ return SafeArea(
                     print(houseId);
 
                     if (houseId != null) {
-                      postImage(images, houseId.toString());
+                      postImage(images, houseId.toString(),userId.toString());
                       print("House added with ID: $houseId");
                     } else {
                       print("addItem returned null");

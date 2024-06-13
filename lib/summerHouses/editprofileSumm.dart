@@ -4,15 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rent_nest_flutter/LOGIN.dart';
 import 'package:http_parser/http_parser.dart';
-import 'ProfileSumm.dart';
 import 'package:http/http.dart' as http;
+
+import 'ProfileSumm.dart';
 
 class editprofileSumm extends StatefulWidget {
   @override
-  State<editprofileSumm> createState() => _ProfileState();
+  State<editprofileSumm> createState() => _editprofileSummState();
 }
 
-class _ProfileState extends State<editprofileSumm> {
+class _editprofileSummState extends State<editprofileSumm> {
 
   Uint8List? image;
   XFile? file;
@@ -52,6 +53,7 @@ class _ProfileState extends State<editprofileSumm> {
     );
 
     request.files.add(multipartRequest);
+    request.fields['userId'] = userId;
     request.fields['entity_type'] = "USER_AVATAR";
     request.fields['entity_id'] = userId;
 
@@ -61,14 +63,14 @@ class _ProfileState extends State<editprofileSumm> {
      String data = await response.stream.bytesToString();
 
       print('Image uploaded successfully $data');
-      setState(() {
-       // Navigator.push(
-       //   context,
-       //   MaterialPageRoute(
-       //     builder: (context) => Profile(),
-       //   ),
-       // );
-     });
+
+       Navigator.push(
+         context,
+         MaterialPageRoute(
+           builder: (context) => ProfileSumm(),
+         ),
+       );
+
     } else {
       print('Image upload failed with status: ${response.statusCode}');
     }
@@ -94,7 +96,7 @@ class _ProfileState extends State<editprofileSumm> {
      _passwordController.text =userMap['password'];
    }
 
-void sign(String name , String email,  String number ,String password ,dynamic userId, BuildContext context) async {
+void editProfile(String name , String email,  String number ,String password ,dynamic userId, BuildContext context) async {
     try {
        final response = await http.put(
          Uri.parse('https://rentnest.onrender.com/rentNest/api/updateUser/'
@@ -121,13 +123,9 @@ void sign(String name , String email,  String number ,String password ,dynamic u
            userMap['name']=name;
            userMap['email']=email;
            userMap['number']=number;
-           Navigator.push(
-             context,
-             MaterialPageRoute(
-               builder: (context) => ProfileSumm(),
-             ),
-           );
+
            print(" Response body: JSON: ${response.body}");
+
 
          }
          else {
@@ -190,9 +188,9 @@ void sign(String name , String email,  String number ,String password ,dynamic u
                             :
                         CircleAvatar(
                           radius: 64,
-                          backgroundImage: SummimageBytes.isEmpty
+                          backgroundImage: imageBytesSumm.isEmpty
                               ? AssetImage('Photos/profilelogo.png')as ImageProvider<Object>
-                              : NetworkImage(SummimageBytes),
+                              : NetworkImage(imageBytesSumm),
 
                         ),
                         Positioned(
@@ -310,10 +308,11 @@ void sign(String name , String email,  String number ,String password ,dynamic u
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          sign(_nameController.text.toString() ,_emailController.text.toString() ,
+                          postImage(image ,userId.toString(),file);
+
+                          editProfile(_nameController.text.toString() ,_emailController.text.toString() ,
                             _phoneController.text.toString(), _passwordController.text.toString(),userMap['id'], context,);
 
-                          postImage(image ,userId.toString(),file);
 
                         },
                         child: const Text('Save'),

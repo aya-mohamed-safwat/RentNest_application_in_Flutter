@@ -3,14 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
+import '../ImageAPI.dart';
 import '../LOGIN.dart';
 import 'Add_itemSumm.dart';
 import 'ApiSumm.dart';
-import 'ImageAPISumm.dart';
+
+import 'EditHouseSumm.dart';
 import 'editprofileSumm.dart';
 
-String SummimageBytes="";
-
+String imageBytesSumm="";
+int countSumm =1;
+List<dynamic> ImagesForEditingSumm=[];
 
 class ProfileSumm extends StatefulWidget {
   @override
@@ -20,7 +23,7 @@ class ProfileSumm extends StatefulWidget {
 class _ProfileState extends State<ProfileSumm> {
 
   ApiSumm api =new ApiSumm();
-  ImageAPISumm imageapi =new ImageAPISumm();
+  ImageAPI imageapi =new ImageAPI();
   List<Map<dynamic, dynamic>> userHouses =[];
 
   List<Map<String, dynamic>> housesImages =[];
@@ -32,26 +35,17 @@ class _ProfileState extends State<ProfileSumm> {
     super.initState();
     fetchData();
     fetchProfileImageById();
-    // fetchHousesImageById();
   }
 //=====================================================================
 //=====================================================================
-  Future<void> fetchProfileImageById() async {
-    try {
-      List<dynamic> fetchedImages = await imageapi.fetchImageById(userMap['id'],"USER_AVATAR");
-      setState(() {
-        SummimageBytes = fetchedImages.last;
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-//=====================================================================
-//=====================================================================
-  Future<void> fetchHousesImageById() async {
-    for(int i = 1 ; i <= length.length ; i++) {
+  Future<void> fetchImageByEntityIdAndUserId() async {
+    for(int i = 1; i <= length.length ; i++) {
       try {
-        List<dynamic> fetchedImages = await imageapi.fetchImageById(i, "SUMMER_HOUSE");
+        List<dynamic> fetchedImages = await imageapi.fetchImageByEntityIdAndUserId(countSumm, "SUMMER_HOUSE" ,userMap['id']);
+        while(fetchedImages.isEmpty){
+          countSumm++;
+          fetchedImages = await imageapi.fetchImageByEntityIdAndUserId(countSumm, "SUMMER_HOUSE", userMap['id']);
+        }
         String firstImage = fetchedImages.first;
         Map<String, String> map = {"image": firstImage};
         setState(() {
@@ -61,8 +55,38 @@ class _ProfileState extends State<ProfileSumm> {
       catch (e) {
         print(e.toString());
       }
+      countSumm++;
     }
     userHouses =length;
+    countSumm =1;
+  }
+//=====================================================================
+//=====================================================================
+  Future<void> fetchProfileImageById() async {
+    try {
+      List<dynamic> fetchedImages = await imageapi.fetchImageById(userMap['id'],"USER_AVATAR");
+      if(fetchedImages.isNotEmpty) {
+        setState(() {
+          imageBytesSumm= fetchedImages.last;
+        });
+      }
+      else{ imageBytesSumm = "";}
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+//=====================================================================
+//=====================================================================
+  Future<void> deleteHousesImage(List names) async {
+
+    for (String item in names)  {
+      try {
+        await imageapi.deleteImages(item);
+
+      } catch (e) {
+        print(e.toString());
+      }
+    }
   }
 //=====================================================================
 //=====================================================================
@@ -70,10 +94,8 @@ class _ProfileState extends State<ProfileSumm> {
     try {
       List<Map<dynamic, dynamic>> fetchedUserHouses = await api.getUserSummHouses(userMap['id']);
       setState(() {
-       // userHouses = fetchedUserHouses;
         length =fetchedUserHouses;
-         fetchHousesImageById();
-
+        fetchImageByEntityIdAndUserId();
       });
     } catch (e) {
       print(e.toString());
@@ -129,10 +151,9 @@ class _ProfileState extends State<ProfileSumm> {
             children: [
               CircleAvatar(
                 radius: 64,
-                backgroundImage: SummimageBytes.isEmpty
-                    ? AssetImage('Photos/profilelogo.png')as ImageProvider<Object>
-                    : NetworkImage(SummimageBytes),
-
+                backgroundImage: imageBytesSumm.isNotEmpty
+                    ? NetworkImage(imageBytesSumm)
+                    : AssetImage('Photos/profilelogo.png') as ImageProvider<Object>,
               ),
 
             ],
@@ -221,11 +242,82 @@ class _ProfileState extends State<ProfileSumm> {
                         ),
                         Row(
                           children: [
-                            IconButton(
-                              onPressed: () {
-                                print('Index: $index');
+
+                            PopupMenuButton<String>(
+
+                              onSelected: (value) {
+                                if (value == 'delete item') {
+                                  String getImageFileName(String imageUrl) {
+                                    Uri uri = Uri.parse(imageUrl);
+                                    return uri.pathSegments.last;
+                                  }
+                                  Future<void> getHouseImages() async {
+                                    for(int i = 1 ; i <= length.length ; i++) {
+                                      try {
+                                        List getImages = await imageapi.fetchImageById(userHouses.elementAt(index)['summerHouseId'], "SUMMER_HOUSE");
+
+                                        List<String> imageFileNames = getImages.map((imageUrl) => getImageFileName(imageUrl)).toList();
+                                        print(imageFileNames);
+
+                                        await deleteHousesImage(imageFileNames);
+                                      } catch (e) {
+                                        print(e.toString());
+                                      }
+                                    }
+                                  }
+                                  getHouseImages();
+                                  Future<void> deleteHouse() async {
+                                    try {
+                                      String deleteHouse = await api.deleteItem(userHouses.elementAt(index)['summerHouseId']);
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => ProfileSumm()), // Navigate to the contact page
+                                      );
+                                    } catch (e) {
+                                      print(e.toString());
+                                    }
+                                  }
+                                  deleteHouse();
+                                }
+
+                                Future<void> handleEditItem() async {
+                                  ImagesForEditingSumm = await imageapi.fetchImageById(userHouses.elementAt(index)["summerHouseId"], "SUMMER_HOUSE");
+                                  getHouseToUpdateSumm(userHouses.elementAt(index));
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => EditHouseSumm()), // Navigate to the contact page
+                                  );
+                                }
+                                if (value == 'edit item') {
+
+                                  handleEditItem();
+                                }
                               },
-                              icon: Icon(
+                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'edit item',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.edit),
+                                      SizedBox(width: 8), // Adjust spacing as needed
+                                      Text('edit item'),
+                                    ],
+                                  ),
+                                ),
+                                const PopupMenuItem<String>(
+                                    value: 'delete item',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.delete),
+                                        SizedBox(width: 8), // Adjust spacing as needed
+                                        Text('delete item'),
+                                      ],
+                                    )
+                                ),
+
+                              ],
+                              icon: const Icon(
                                 CupertinoIcons.ellipsis_circle,
                               ),
                             ),

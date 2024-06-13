@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import '../text form.dart';
 import 'package:http/http.dart' as http;
 import 'Home.dart';
-import 'ImageAPI.dart';
+import '../ImageAPI.dart';
 import 'Profile.dart';
 
 ImageAPI imageapi =new ImageAPI();

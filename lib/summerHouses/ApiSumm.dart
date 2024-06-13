@@ -7,7 +7,7 @@ class ApiSumm{
     List<Map<dynamic, dynamic>> gridMap =[];
     try {
       final response = await http.get(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/getSummerHouses'),
+        Uri.parse('https://rentnest.onrender.com/rentNest/api/getAllSummerHouses'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -66,4 +66,30 @@ class ApiSumm{
     }
     return userHouses;
   }
+  //============================================================================
+
+  Future<String> deleteItem(int houseId) async {
+    String responseBody = "";
+    try {
+      final response = await http.delete(
+        Uri.parse('https://rentnest.onrender.com/rentNest/api/deleteSummerHouse/$houseId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (response.headers['content-type']!.toLowerCase().contains('application/json')) {
+          responseBody = jsonDecode(response.body);
+          print("Response body: JSON: $responseBody");
+        }
+      } else {
+        print("HTTP Error ${response.statusCode}: ${response.body}");
+      }
+    } catch (e) {
+      print("Exception occurred: $e");
+    }
+    return ("Response body: JSON: $responseBody");
+  }
+
 }

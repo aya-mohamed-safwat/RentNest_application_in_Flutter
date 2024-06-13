@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'SearchResultUni.dart';
+
 
 class SearchScreenUni extends StatefulWidget {
   @override
@@ -11,15 +13,15 @@ class SearchScreenUni extends StatefulWidget {
 }
 
 class _SearchScreenUniState extends State<SearchScreenUni> {
-
-  List<String> locations = [ 'Cairo', 'Giza', 'Luxor', 'Tanta'];
+  List<Map<dynamic, dynamic>> searchHouses =[];
+  List<String> locations = [ 'Cairo', 'Giza','Sharm El Sheik', 'Luxor', 'Tanta'];
   String? selectedLocation = 'Cairo';
 
   double size = 0.0 ;
   double price =0.0;
   int bedRoom =0;
   int bathRoom =0;
-  List<dynamic> responseBody=[];
+  List<Map<dynamic, dynamic>>  responseBody=[];
 
   double _currentValue = 20;
   double _currentValue2 = 20;
@@ -27,38 +29,40 @@ class _SearchScreenUniState extends State<SearchScreenUni> {
   @override
   Widget build (BuildContext context){
 
-    void search(String? location , double size , double price ,int bathRoom , int bedRoom ,BuildContext context ) async {
-          try {
-            final response = await http.get(
-              Uri.parse('https://rentnest.onrender.com/rentNest/api/searchUniversalHousesByFilter'
-                  'location=$location'
-                  '&size=$size'
-                  '&price=$price'
-                  '&bedroomsNum=$bedRoom'
-                  '&bathroomsNum=$bathRoom'),
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-            );
+    Future<List<Map<dynamic, dynamic>>> search(String? location , double size , double price ,int bathRoom , int bedRoom ,BuildContext context ) async {
+      try {
+        final response = await http.get(
+          Uri.parse('https://rentnest.onrender.com/rentNest/api/searchUniversalHousesByFilter?'
+              'location=$location'
+              '&size=$size'
+              '&price=$price'
+              '&bedroomsNum=$bedRoom'
+              '&bathroomsNum=$bathRoom'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+        );
 
-            if (response.statusCode == 200) {
-              if (response.headers['content-type']!.toLowerCase().contains(
-                  'application/json')) {
-                responseBody = jsonDecode(response.body);
-                print(" Response body: JSON: $responseBody");
+        if (response.statusCode == 200) {
+          if (response.headers['content-type']!.toLowerCase().contains(
+              'application/json')) {
+            List<dynamic> decodedResponse = jsonDecode(response.body);
+            searchHouses = decodedResponse.map((dynamic item) {
+              if (item is Map<dynamic, dynamic>) {
+                return item;
+              } else {
+                return {};
               }
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const SearchResultUni(),
-              //   ),
-              // );
-            } else {
-              print("HTTP Error ${response.statusCode}: ${response.body}");
-            }
-          } catch (e) {
-            print(e.toString());
+            }).toList();
+          }
+        } else {
+          print("HTTP Error ${response.statusCode}: ${response.body}");
+        }
+      } catch (e) {
+        print(e.toString());
       }
+      print(searchHouses);
+      return searchHouses;
     }
 
 
@@ -366,7 +370,13 @@ style: ElevatedButton.styleFrom
               child: ElevatedButton(
                 onPressed: () {
                   search(selectedLocation, size, price, bathRoom, bedRoom, context);
-                },
+    getSearchResultUni(searchHouses);
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) => SearchResultUni()));
+    },
+
                 child: Text('Search'),
                 style: ElevatedButton.styleFrom
                   (foregroundColor: Colors.white, backgroundColor: Colors.brown, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),

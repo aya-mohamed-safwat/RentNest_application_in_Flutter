@@ -1,65 +1,97 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:http_parser/http_parser.dart';
-import '../LOGIN.dart';
+import 'package:flutter/rendering.dart';
 import '../text form.dart';
 import 'package:http/http.dart' as http;
-
+import '../ImageAPI.dart';
 import 'ProfileSumm.dart';
 
-Map <String,dynamic> houseResponseSumm ={'location': "", 'size': 0.0, 'bedroomsNum': 0,
-  'bathroomsNum': 0, 'price': 0.0, 'availability': true, 'description':"" , 'houseId': 0};
+ImageAPI imageapi =new ImageAPI();
 
-class ImagePickerDemoSumm extends StatefulWidget {
-  @override
-  _ImagePickerDemoState createState() => _ImagePickerDemoState();
+Map<dynamic , dynamic> dataSumm={};
+void getHouseToUpdateSumm(Map<dynamic , dynamic> getData){
+  dataSumm =getData ;
 }
 
-class _ImagePickerDemoState extends State<ImagePickerDemoSumm> {
+String bathroom =dataSumm['bathroomsNum'].toString();
+String bedroom =dataSumm['bedroomsNum'].toString();
+String location =dataSumm['location'].toString();
+int houseId =dataSumm['summerHouseId'];
+
+
+class EditHouseSumm extends StatefulWidget {
+  @override
+  _EditHouseSummState createState() => _EditHouseSummState();
+}
+
+class _EditHouseSummState extends State<EditHouseSumm> {
+
+
+  late final PageController pageController;
+  final ScrollController _scrollController = ScrollController();
+  int pageNo = 0;
+
+  Timer? carasouelTmer;
+
+  Timer getTimer() {
+    return Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (pageNo == 5) {
+        pageNo = 0;
+      }
+      pageController.animateToPage(
+        pageNo,
+        duration: const Duration(seconds: 2),
+        curve: Curves.easeInOutCirc,
+      );
+      pageNo++;
+    });
+  }
 
   List<String> locations = [ 'Sharm El Sheik', 'Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
-  String? selectedLocation = 'Sharm El Sheik';
+  String? selectedLocation = location;
   bool _lights = true;
 
   final TextEditingController _price = TextEditingController();
   final TextEditingController _size = TextEditingController();
   final TextEditingController _description = TextEditingController();
 
-  int bedRoom =0;
-  int bathRoom =0;
-  int userId =userMap['id'];
-  Map<String, dynamic> responseBody={};
-
-
-  final picker = ImagePicker();
-  List<XFile>? images ;
-  bool showSpinner = false ;
-
-
-  Future<void> openImages() async {
-    try {
-      var pickedfiles = await picker.pickMultiImage();
-      if (pickedfiles != null) {
-        images = pickedfiles;
+  @override
+  void initState() {
+    pageController = PageController(initialPage: 0, viewportFraction: 0.85);
+    carasouelTmer = getTimer();
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
         setState(() {});
       } else {
-        print("No image is selected.");
+        setState(() {});
       }
-    } catch (e) {
-      print("Error while picking files: $e");
-    }
+    });
+
+    super.initState();
+    _size.text = dataSumm['size'].toString();
+    _price.text = dataSumm['price'].toString();
+    _description.text = dataSumm['description'].toString();
+    selectedLocation = dataSumm['location'].toString();
+    bedRoom = int.parse(dataSumm['bedroomsNum'].toString());
+    bathRoom = int.parse(dataSumm['bathroomsNum'].toString());
+    _lights =bool.parse(dataSumm['availability'].toString());
   }
+
+  int bedRoom =int.parse(bedroom);
+  int bathRoom =int.parse(bathroom);
+
+  Map<String, dynamic> responseBody={};
+
   //==========================================================================
 
-  Future addItem(String? location , double size , double price ,int bathRoom
-      , int bedRoom ,String description , int userId ,BuildContext context ) async {
+  void editItem(String? location , double size , double price ,int bathRoom
+      , int bedRoom ,String description , int houseId ,BuildContext context ) async {
     try {
-      final response = await http.post(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/addSummerHouse/$userId'),
+      final response = await http.put(
+        Uri.parse('https://rentnest.onrender.com/rentNest/api/updateSummerHouse/$houseId'),
         body: jsonEncode(<String, dynamic>{
           "location": location,
           "size": size,
@@ -79,67 +111,23 @@ class _ImagePickerDemoState extends State<ImagePickerDemoSumm> {
             'application/json')) {
           responseBody = jsonDecode(response.body);
           print(" Response body: JSON: $responseBody");
+
         }
-
-          houseResponseSumm =responseBody;
-
-        return houseResponseSumm['summerHouseId'];
-      } else {
-        print("HTTP Error ${response.statusCode}: ${response.body}");
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-    return houseResponseSumm['summerHouseId'];
-  }
-//===============================================================================
-
-  Future<dynamic> postImage(List<XFile>? images,String imageId,String userId) async {
-
-    List<Uint8List> bytes=[] ;
-    List<dynamic> name=[] ;
-    for(XFile image in images!){
-      bytes.add(await image.readAsBytes());
-      name.add(image.name);
-    }
-    for(int i = 0; i < bytes.length; i++){
-      Uint8List byte = bytes[i];
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('https://rentnest.onrender.com/image'),);
-
-      var multipartRequest = http.MultipartFile(
-          'image',
-          http.ByteStream.fromBytes(byte),
-          byte.length,
-          filename:name[i],
-          contentType: MediaType('image', 'jpeg')
-      );
-
-      request.files.add(multipartRequest);
-      request.fields['userId'] = userId;
-      request.fields['entity_type'] = "SUMMER_HOUSE";
-      request.fields['entity_id'] = imageId;
-
-      var response = await request.send();
-
-      if (response.statusCode == 200) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ProfileSumm(),
           ),
         );
-        print('Image uploaded successfully');
-
       } else {
-        print('Image upload failed with status: ${response.statusCode}');
+        print("HTTP Error ${response.statusCode}: ${response.body}");
       }
+    } catch (e) {
+      print(e.toString());
     }
-
   }
+//===============================================================================
 
-//================================================================
   @override
   Widget build(BuildContext context) {
 
@@ -148,34 +136,49 @@ return SafeArea(
     body: SingleChildScrollView(
       child: Column(
         children: [
-          images != null
-              ? Wrap(
-            children: images!.map((imageone) {
-              return Container(
-                child: Card(
-                  child: Container(
-                    height: 100,
-                    width: 100,
-                    child: images == null
-                        ? Center(child: const Text('No image selected' ))
-                        : Image.file(File(imageone.path)!),
-                    // child: Image.file(File(imageone.path)),
-                  ),
-                ),
-              );
-            }).toList(),
-          )
-              : Container(),
-
-          /* SizedBox(
-              width: 300,
-              height:300 ,
-              child: _image == null
-                  ? Center(child: const Text('No image selected' ))
-                  : Image.file(_image!),
-            ),*/
           const SizedBox(
             height: 10.0,
+          ),
+          const SizedBox(
+            height: 2.0,
+          ),
+
+          SizedBox(
+            height: 200,
+            child: PageView.builder(
+              controller: pageController,
+              onPageChanged: (index) {
+                pageNo = index;
+                setState(() {});
+
+              },
+              itemBuilder: (_, index) {
+
+                return AnimatedBuilder(
+                  animation: pageController,
+                  builder: (ctx, child) {
+                    return child!;
+                  },
+
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      right: 8, left: 8, top: 18, ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.grey.shade300,
+                    ),
+                    child: Image.network(ImagesForEditingSumm[index],
+                      fit: BoxFit.fitWidth,
+
+                    ) ,
+                  ),);
+
+              },
+              itemCount: ImagesForEditingSumm.length,
+            ),
+          ),
+          const SizedBox(
+            height: 20.0,
           ),
           Container(
             width: 300,
@@ -470,28 +473,17 @@ return SafeArea(
               ),
               width: 200,
               child: MaterialButton(
-                onPressed: () async {
-                  try {
-                    var houseId = await addItem(
-                      selectedLocation,
-                      double.parse(_size.text),
-                      double.parse(_price.text),
-                      bathRoom,
-                      bedRoom,
-                      _description.text.toString(),
-                      userId,
-                      context,
-                    );
-                    print(houseId);
-
-                    if (houseId != null) {
-                      postImage(images, houseId.toString(), userId.toString());
-                    } else {
-                      print("addItem returned null");
-                    }
-                  } catch (e) {
-                    print("Error: $e");
-                  }
+                onPressed:(){
+                  editItem(
+                    selectedLocation,
+                    double.parse(_size.text),
+                    double.parse(_price.text),
+                    bathRoom,
+                    bedRoom,
+                    _description.text.toString(),
+                    houseId,
+                    context,
+                  );
                 },
                 child: const Text(
                   "Save",
@@ -504,16 +496,6 @@ return SafeArea(
             ),
           ],
         ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: openImages,
-          tooltip: 'Pick Image',
-          backgroundColor: Colors.white,
-          child: Icon(
-            Icons.add_a_photo,
-            color: Colors.brown,
-            size: 30,
-          ),
         ),
       ),
     );

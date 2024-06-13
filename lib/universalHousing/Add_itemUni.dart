@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 
 import 'ProfileUni.dart';
 
-Map <String,dynamic> houseResponse ={'location': "", 'size': 0.0, 'bedroomsNum': 0,
+Map <String,dynamic> houseResponseUni ={'location': "", 'size': 0.0, 'bedroomsNum': 0,
   'bathroomsNum': 0, 'price': 0.0, 'availability': true, 'description':"" , 'houseId': 0};
 
 class ImagePickerDemoUni extends StatefulWidget {
@@ -81,26 +81,20 @@ class _ImagePickerDemoState extends State<ImagePickerDemoUni> {
           print(" Response body: JSON: $responseBody");
         }
 
-          houseResponse =responseBody;
+          houseResponseUni =responseBody;
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileUni(),
-          ),
-        );
-        return houseResponse['universalHouseId'];
+        return houseResponseUni['universalHouseId'];
       } else {
         print("HTTP Error ${response.statusCode}: ${response.body}");
       }
     } catch (e) {
       print(e.toString());
     }
-    return houseResponse['universalHouseId'];
+    return houseResponseUni['universalHouseId'];
   }
 //===============================================================================
 
-  Future<dynamic> postImage(List<XFile>? images,String imageId) async {
+  Future<dynamic> postImage(List<XFile>? images,String imageId,String userId) async {
 
     List<Uint8List> bytes=[] ;
     List<dynamic> name=[] ;
@@ -123,12 +117,20 @@ class _ImagePickerDemoState extends State<ImagePickerDemoUni> {
       );
 
       request.files.add(multipartRequest);
+      request.fields['userId'] = userId;
       request.fields['entity_type'] = "UNIVERSAL_HOUSE";
       request.fields['entity_id'] = imageId;
 
       var response = await request.send();
 
       if (response.statusCode == 200) {
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfileUni(),
+          ),
+        );
         print('Image uploaded successfully');
 
       } else {
@@ -483,7 +485,7 @@ return SafeArea(
                     );
 
                     if (houseId != null) {
-                      postImage(images, houseId.toString());
+                      postImage(images, houseId.toString(),userId.toString());
                     } else {
                       print("addItem returned null");
                     }

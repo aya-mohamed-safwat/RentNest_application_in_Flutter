@@ -52,6 +52,7 @@ class _ProfileState extends State<editprofileCap> {
     );
 
     request.files.add(multipartRequest);
+    request.fields['userId'] = userId;
     request.fields['entity_type'] = "USER_AVATAR";
     request.fields['entity_id'] = userId;
 
@@ -61,14 +62,12 @@ class _ProfileState extends State<editprofileCap> {
      String data = await response.stream.bytesToString();
 
       print('Image uploaded successfully $data');
-      setState(() {
-       // Navigator.push(
-       //   context,
-       //   MaterialPageRoute(
-       //     builder: (context) => Profile(),
-       //   ),
-       // );
-     });
+     Navigator.push(
+       context,
+       MaterialPageRoute(
+         builder: (context) => ProfileCap(),
+       ),
+     );
     } else {
       print('Image upload failed with status: ${response.statusCode}');
     }
@@ -94,7 +93,7 @@ class _ProfileState extends State<editprofileCap> {
      _passwordController.text =userMap['password'];
    }
 
-void sign(String name , String email,  String number ,String password ,dynamic userId, BuildContext context) async {
+void editProfile(String name , String email,  String number ,String password ,dynamic userId, BuildContext context) async {
     try {
        final response = await http.put(
          Uri.parse('https://rentnest.onrender.com/rentNest/api/updateUser/'
@@ -190,9 +189,9 @@ void sign(String name , String email,  String number ,String password ,dynamic u
                             :
                         CircleAvatar(
                           radius: 64,
-                          backgroundImage: SummimageBytes.isEmpty
+                          backgroundImage: imageBytesCap.isEmpty
                               ? AssetImage('Photos/profilelogo.png')as ImageProvider<Object>
-                              : NetworkImage(SummimageBytes),
+                              : NetworkImage(imageBytesCap),
 
                         ),
                         Positioned(
@@ -310,7 +309,7 @@ void sign(String name , String email,  String number ,String password ,dynamic u
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          sign(_nameController.text.toString() ,_emailController.text.toString() ,
+                          editProfile(_nameController.text.toString() ,_emailController.text.toString() ,
                             _phoneController.text.toString(), _passwordController.text.toString(),userMap['id'], context,);
 
                           postImage(image ,userId.toString(),file);

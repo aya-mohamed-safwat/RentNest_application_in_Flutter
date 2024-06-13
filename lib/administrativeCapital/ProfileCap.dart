@@ -3,24 +3,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
+import '../ImageAPI.dart';
 import '../LOGIN.dart';
 import 'Add_itemCap.dart';
 import 'ApiCap.dart';
-import 'ImageAPICap.dart';
+import 'EditHouseCap.dart';
 import 'editprofileCap.dart';
 
-String SummimageBytes="";
-
-
+String imageBytesCap="";
+List<dynamic> ImagesForEditingCap=[];
 class ProfileCap extends StatefulWidget {
   @override
   State<ProfileCap> createState() => _ProfileState();
 }
 
 class _ProfileState extends State<ProfileCap> {
-
+  int count =1;
   ApiCap api =new ApiCap();
-  ImageAPICap imageapi =new ImageAPICap();
+  ImageAPI imageapi =new ImageAPI();
   List<Map<dynamic, dynamic>> userHouses =[];
 
   List<Map<String, dynamic>> housesImages =[];
@@ -39,47 +39,66 @@ class _ProfileState extends State<ProfileCap> {
   Future<void> fetchProfileImageById() async {
     try {
       List<dynamic> fetchedImages = await imageapi.fetchImageById(userMap['id'],"USER_AVATAR");
-      setState(() {
-        SummimageBytes = fetchedImages.last;
-      });
+      if(fetchedImages.isNotEmpty) {
+        setState(() {
+          imageBytesCap = fetchedImages.last;
+        });
+      }
+      else{ imageBytesCap = "";}
     } catch (e) {
       print(e.toString());
     }
   }
 //=====================================================================
 //=====================================================================
-  Future<void> fetchHousesImageById() async {
-    for(int i = 1 ; i <= length.length ; i++) {
+  Future<void> fetchImageByEntityIdAndUserId() async {
+    for(int i = 1; i <= length.length ; i++) {
       try {
-        List<dynamic> fetchedImages = await imageapi.fetchImageById(i, "SUMMER_HOUSE");
+        List<dynamic> fetchedImages = await imageapi.fetchImageByEntityIdAndUserId(count, "CAPITAL_HOUSE" ,userMap['id']);
+        while(fetchedImages.isEmpty){
+          count++;
+          fetchedImages = await imageapi.fetchImageByEntityIdAndUserId(count, "CAPITAL_HOUSE", userMap['id']);
+        }
         String firstImage = fetchedImages.first;
         Map<String, String> map = {"image": firstImage};
         setState(() {
           housesImages.add(map);
-         // userHouses =length;
         });
       }
       catch (e) {
         print(e.toString());
       }
+      count++;
     }
     userHouses =length;
-    print(housesImages);
-    //fetchData();
+    count =1;
   }
 //=====================================================================
 //=====================================================================
   Future<void> fetchData() async {
     try {
-      List<Map<dynamic, dynamic>> fetchedUserHouses = await api.getUserSummHouses(userMap['id']);
+      List<Map<dynamic, dynamic>> fetchedUserHouses = await api.getUserCapHouses(userMap['id']);
       setState(() {
-       // userHouses = fetchedUserHouses;
         length =fetchedUserHouses;
-         fetchHousesImageById();
-
+        fetchImageByEntityIdAndUserId();
       });
     } catch (e) {
       print(e.toString());
+    }
+
+  }
+  //=====================================================================
+//=====================================================================
+
+  Future<void> deleteHousesImage(List names) async {
+
+    for (String item in names)  {
+      try {
+        await imageapi.deleteImages(item);
+
+      } catch (e) {
+        print(e.toString());
+      }
     }
   }
 //=====================================================================
@@ -132,10 +151,9 @@ class _ProfileState extends State<ProfileCap> {
             children: [
               CircleAvatar(
                 radius: 64,
-                backgroundImage: SummimageBytes.isEmpty
-                    ? AssetImage('Photos/profilelogo.png')as ImageProvider<Object>
-                    : NetworkImage(SummimageBytes),
-
+                backgroundImage: imageBytesCap.isNotEmpty
+                    ? NetworkImage(imageBytesCap)
+                    : AssetImage('Photos/profilelogo.png') as ImageProvider<Object>,
               ),
 
             ],
@@ -224,11 +242,84 @@ class _ProfileState extends State<ProfileCap> {
                         ),
                         Row(
                           children: [
-                            IconButton(
-                              onPressed: () {
-                                print('Index: $index');
+
+                            PopupMenuButton<String>(
+
+                              onSelected: (value) {
+                                if (value == 'delete item') {
+                                  String getImageFileName(String imageUrl) {
+                                    Uri uri = Uri.parse(imageUrl);
+                                    return uri.pathSegments.last;
+                                  }
+                                  Future<void> getHouseImages() async {
+                                    for(int i = 1 ; i <= length.length ; i++) {
+                                      try {
+                                        List getImages = await imageapi.fetchImageById(userHouses.elementAt(index)['capitalHouseId'], "CAPITAL_HOUSE");
+
+                                        List<String> imageFileNames = getImages.map((imageUrl) => getImageFileName(imageUrl)).toList();
+
+                                        await deleteHousesImage(imageFileNames);
+                                      } catch (e) {
+                                        print(e.toString());
+                                      }
+                                    }
+                                  }
+                                  getHouseImages();
+                                  Future<void> deleteHouse() async {
+                                    try {
+                                      String deleteHouse = await api.deleteItem(userHouses.elementAt(index)['capitalHouseId']);
+                                      // setState(() {
+                                      //   HouseImageById(userHouses.elementAt(index)['houseId']);
+                                      //   fetchData();
+                                      // });
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => ProfileCap()), // Navigate to the contact page
+                                      );
+                                    } catch (e) {
+                                      print(e.toString());
+                                    }
+                                  }
+                                  deleteHouse();
+                                }
+
+                                Future<void> handleEditItem() async {
+                                  ImagesForEditingCap = await imageapi.fetchImageById(userHouses.elementAt(index)["capitalHouseId"], "CAPITAL_HOUSE");
+                                  getHouseToUpdateCap(userHouses.elementAt(index));
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => EditHouseCap()), // Navigate to the contact page
+                                  );
+                                }
+                                if (value == 'edit item') {
+
+                                  handleEditItem();
+                                }
                               },
-                              icon: Icon(
+                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'edit item',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.edit),
+                                      SizedBox(width: 8), // Adjust spacing as needed
+                                      Text('edit item'),
+                                    ],
+                                  ),
+                                ),
+                                const PopupMenuItem<String>(
+                                    value: 'delete item',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.delete),
+                                        SizedBox(width: 8), // Adjust spacing as needed
+                                        Text('delete item'),
+                                      ],
+                                    )
+                                ),
+
+                              ],
+                              icon: const Icon(
                                 CupertinoIcons.ellipsis_circle,
                               ),
                             ),

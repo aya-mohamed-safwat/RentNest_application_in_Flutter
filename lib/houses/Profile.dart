@@ -7,11 +7,10 @@ import 'package:http/http.dart' as http;
 import '../LOGIN.dart';
 import 'Api.dart';
 import 'EditHouse.dart';
-import 'ImageAPI.dart';
+import '../ImageAPI.dart';
 import 'editprofile.dart';
 
 String imageBytes="";
-int count =1;
 List<dynamic> ImagesForEditing=[];
 class Profile extends StatefulWidget {
   @override
@@ -19,7 +18,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-
+  int count =1;
   Api api =new Api();
   ImageAPI imageapi =new ImageAPI();
   List<Map<dynamic, dynamic>> userHouses =[];
@@ -32,7 +31,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     fetchData();
-    fetchImageByEntityIdAndUserId();
+    // fetchImageByEntityIdAndUserId();
     fetchProfileImageById();
   }
 //=====================================================================
@@ -61,8 +60,6 @@ class _ProfileState extends State<Profile> {
           fetchedImages = await imageapi.fetchImageByEntityIdAndUserId(count, "HOUSE", userMap['id']);
         }
         String firstImage = fetchedImages.first;
-        print(fetchedImages);
-        print(firstImage);
         Map<String, String> map = {"image": firstImage};
         setState(() {
           housesImages.add(map);
@@ -96,10 +93,8 @@ class _ProfileState extends State<Profile> {
     try {
       List<Map<dynamic, dynamic>> fetchedUserHouses = await api.getUserHouses(userMap['id']);
       setState(() {
-       // userHouses = fetchedUserHouses;
         length =fetchedUserHouses;
-        // fetchImageByEntityIdAndUserId();
-
+        fetchImageByEntityIdAndUserId();
       });
     } catch (e) {
       print(e.toString());

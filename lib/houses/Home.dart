@@ -6,8 +6,8 @@ import 'package:flutter/rendering.dart';
 import 'package:rent_nest_flutter/houses/Api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../details.dart';
-import 'ImageAPI.dart';
+import 'details.dart';
+import '../ImageAPI.dart';
 
 List<String> picsList=[ "https://i.imgur.com/eGE1PDD.png"
   ,"https://images.unsplash.com/photo-1584719866406-c76ddee48493?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -90,6 +90,7 @@ class _HomeState extends State<Home> {
     for(int i = 1 ; i <= length.length ; i++) {
       try {
         List<dynamic> fetchedImages = await imageapi.fetchImageById(count1, "HOUSE");
+        print(fetchedImages);
         while(fetchedImages.isEmpty){
           count1++;
           fetchedImages = await imageapi.fetchImageById(count1, "HOUSE");
@@ -115,6 +116,7 @@ class _HomeState extends State<Home> {
     try {
       List<Map<dynamic, dynamic>> fetchedUserHouses = await api.viewAllHouses();
       setState(() {
+        print(fetchedUserHouses);
         length =fetchedUserHouses;
         fetchHousesImageById();
 
@@ -299,8 +301,8 @@ class _HomeState extends State<Home> {
               );
             },
           ),
-             Padding(
-                padding: const EdgeInsets.only(
+             const Padding(
+                padding: EdgeInsets.only(
                   top: 20,
                 ),
 

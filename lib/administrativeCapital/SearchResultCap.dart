@@ -1,35 +1,29 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rent_nest_flutter/houses/Add_item.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
-import '../LOGIN.dart';
-import '../contact.dart';
-import 'details.dart';
-import 'Api.dart';
-import 'EditHouse.dart';
-import 'Home.dart';
+
 import '../ImageAPI.dart';
-import 'Profile.dart';
-import 'SearchScreen.dart';
-import 'editprofile.dart';
+import 'HomeCap.dart';
+import 'detailsCap.dart';
+
 
 String imageBytes="";
 int countSearch =1;
 
-List<Map<dynamic, dynamic>> searchResult =[];
-void getSearchResult(List<Map<dynamic, dynamic>> x){
-  searchResult =x ;
+List<Map<dynamic, dynamic>> searchResultCap =[];
+void getSearchResultCap(List<Map<dynamic, dynamic>> x){
+  searchResultCap =x ;
 }
 
 
-class SearchResult extends StatefulWidget {
+class SearchResultCap extends StatefulWidget {
   @override
-  State<SearchResult> createState() => _SearchResultState();
+  State<SearchResultCap> createState() => _SearchResultCapState();
 }
 
-class _SearchResultState extends State<SearchResult> {
+class _SearchResultCapState extends State<SearchResultCap> {
 
   @override
   void initState() {
@@ -47,10 +41,10 @@ class _SearchResultState extends State<SearchResult> {
   Future<void> fetchHousesImageById() async {
     for(int i = 1 ; i <= length.length ; i++) {
       try {
-        List<dynamic> fetchedImages = await imageapi.fetchImageById(countSearch, "HOUSE");
+        List<dynamic> fetchedImages = await imageapi.fetchImageById(countSearch, "capitalHouseId");
         while(fetchedImages.isEmpty){
           countSearch++;
-          fetchedImages = await imageapi.fetchImageById(countSearch, "HOUSE");
+          fetchedImages = await imageapi.fetchImageById(countSearch, "capitalHouseId");
         }
         String firstImage = fetchedImages.first;
         Map<String, String> map = {"image": firstImage};
@@ -71,7 +65,7 @@ class _SearchResultState extends State<SearchResult> {
   Future<void> fetchlength() async {
     try {
       setState(() {
-        length =searchResult;
+        length =searchResultCap;
         fetchHousesImageById();
 
       });
@@ -157,12 +151,12 @@ class _SearchResultState extends State<SearchResult> {
                           children: [
                             IconButton(
                               onPressed: () async {
-                                fetchedImages = await imageApi.fetchImageById(gridSearch.elementAt(index)['houseId'], "HOUSE");
-                                getData(gridSearch.elementAt(index));
+                                fetchedImagesCap = await imageApiCap.fetchImageById(gridSearch.elementAt(index)['capitalHouseId'], "CAPITAL_HOUSE");
+                                getDataCap(gridSearch.elementAt(index));
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => details(),
+                                    builder: (context) => detailsCap(),
                                   ),
                                 );
                               },

@@ -1,36 +1,34 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:rent_nest_flutter/houses/Home.dart';
-
-import 'houses/ImageAPI.dart';
-
-
-ImageAPI imageApi =new ImageAPI();
+import '../ImageAPI.dart';
+import 'HomeSumm.dart';
 
 
-Map<dynamic , dynamic> data={};
-Map<dynamic , dynamic> userInfo={};
-void getData(Map<dynamic , dynamic> getData){
-  data =getData ;
-  userInfo=data['user'];
-  print("data= $userInfo");
+ImageAPI imageApiSumm =new ImageAPI();
+
+
+Map<dynamic , dynamic> dataSumm={};
+Map<dynamic , dynamic> userInfoSumm={};
+void getDataSumm(Map<dynamic , dynamic> getData){
+  dataSumm =getData ;
+  userInfoSumm=dataSumm['user'];
 }
 
 
-class details extends StatefulWidget {
-  const details({super.key});
+class detailsSumm extends StatefulWidget {
+  const detailsSumm({super.key});
 
   @override
-  State<details> createState() => _detailsState();
+  State<detailsSumm> createState() => _detailsSummState();
 }
 
-class _detailsState extends State<details> {
+class _detailsSummState extends State<detailsSumm> {
 
-  String bathroom =data['bathroomsNum'].toString();
-  String bedroom =data['bedroomsNum'].toString();
-  String size =data['size'].toString();
-  String price =data['price'].toString();
+  String bathroom =dataSumm['bathroomsNum'].toString();
+  String bedroom =dataSumm['bedroomsNum'].toString();
+  String size =dataSumm['size'].toString();
+  String price =dataSumm['price'].toString();
 
   late final PageController pageController;
   final ScrollController _scrollController = ScrollController();
@@ -84,7 +82,7 @@ class _detailsState extends State<details> {
                onPressed: () {
                  Navigator.push(
                      context,
-                     MaterialPageRoute(builder: (context) => Home()));
+                     MaterialPageRoute(builder: (context) => HomeSumm()));
                },
              ),
          ),
@@ -115,14 +113,14 @@ class _detailsState extends State<details> {
     borderRadius: BorderRadius.circular(20.0),
     color: Colors.grey.shade300,
     ),
-    child: Image.network(fetchedImages[index],
+    child: Image.network(fetchedSummImages[index],
     fit: BoxFit.fitWidth,
 
     ) ,
     ),);
 
     },
-    itemCount: fetchedImages.length,
+    itemCount: fetchedSummImages.length,
     ),
     ),
     const SizedBox(
@@ -135,7 +133,7 @@ class _detailsState extends State<details> {
                 alignment: Alignment.centerLeft,
                 child: Text('Description',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.brown,),),
               ),
-               Text(data['description'],style: TextStyle(fontSize: 18)),
+               Text(dataSumm['description'],style: TextStyle(fontSize: 18)),
             ],
           ),
         ),
@@ -174,7 +172,7 @@ class _detailsState extends State<details> {
                  alignment: Alignment.centerLeft,
                  child: Text('Location',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.brown,),),
                ),
-               Text(data['location'],style: TextStyle(fontSize: 18)),
+               Text(dataSumm['location'],style: TextStyle(fontSize: 18)),
              ]
            ),
          ),
@@ -215,7 +213,7 @@ class _detailsState extends State<details> {
                  alignment: Alignment.centerLeft,
                  child: Text('Owend by',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.brown,),),
                ),
-               Text(userInfo['name'],style: TextStyle(fontSize: 18)),
+               Text(userInfoSumm['name'],style: TextStyle(fontSize: 18)),
              ],
            ),
          ),
@@ -228,7 +226,7 @@ class _detailsState extends State<details> {
                  alignment: Alignment.centerLeft,
                  child: Text('Phone number',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.brown,),),
                ),
-               Text(userInfo['number'].toString(),style: TextStyle(fontSize: 18)),
+               Text(userInfoSumm['number'].toString(),style: TextStyle(fontSize: 18)),
              ],
            ),
          ),
