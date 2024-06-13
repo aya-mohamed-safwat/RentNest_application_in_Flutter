@@ -12,7 +12,7 @@ import 'EditHouseSumm.dart';
 import 'editprofileSumm.dart';
 
 String imageBytesSumm="";
-int countSumm =1;
+
 List<dynamic> ImagesForEditingSumm=[];
 
 class ProfileSumm extends StatefulWidget {
@@ -21,7 +21,7 @@ class ProfileSumm extends StatefulWidget {
 }
 
 class _ProfileState extends State<ProfileSumm> {
-
+  int countSumm =1;
   ApiSumm api =new ApiSumm();
   ImageAPI imageapi =new ImageAPI();
   List<Map<dynamic, dynamic>> userHouses =[];
@@ -45,6 +45,7 @@ class _ProfileState extends State<ProfileSumm> {
         while(fetchedImages.isEmpty){
           countSumm++;
           fetchedImages = await imageapi.fetchImageByEntityIdAndUserId(countSumm, "SUMMER_HOUSE", userMap['id']);
+          print(countSumm);
         }
         String firstImage = fetchedImages.first;
         Map<String, String> map = {"image": firstImage};

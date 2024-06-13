@@ -25,7 +25,7 @@ List<String> texts = ["RentNest",
   "Galala city",
   "Nubian Village in Aawan",
 ];
-int countCap =1;
+
 List<dynamic> fetchedImagesCap=[];
 class HomeCap extends StatefulWidget {
   const HomeCap({Key? key}) : super(key: key);
@@ -36,7 +36,7 @@ class HomeCap extends StatefulWidget {
 
 class _HomeState extends State<HomeCap> {
 
-
+  int countCap =1;
   ApiCap api =new ApiCap();
   List<Map<dynamic, dynamic>> gridMap =[];
 

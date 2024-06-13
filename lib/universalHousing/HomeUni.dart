@@ -25,7 +25,7 @@ List<String> texts = ["RentNest",
   "Galala city",
   "Nubian Village in Aawan",
 ];
-int countUni =1;
+
 List<dynamic> fetchedImagesUni=[];
 class HomeUni extends StatefulWidget {
   const HomeUni({Key? key}) : super(key: key);
@@ -35,7 +35,7 @@ class HomeUni extends StatefulWidget {
 }
 
 class _HomeState extends State<HomeUni> {
-
+  int countUni =1;
 
   ApiUni api =new ApiUni();
   List<Map<dynamic, dynamic>> gridMap =[];
