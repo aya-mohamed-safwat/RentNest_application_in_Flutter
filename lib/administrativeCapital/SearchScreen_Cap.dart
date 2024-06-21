@@ -32,7 +32,7 @@ class _SearchScreenCapState extends State<SearchScreenCap> {
     Future<List<Map<dynamic, dynamic>>> search(String? location , double size , double price ,int bathRoom , int bedRoom ,BuildContext context ) async {
       try {
         final response = await http.get(
-          Uri.parse('https://rentnest.onrender.com/rentNest/api/searchCapitalHousesByFilter?'
+          Uri.parse('https://rentnestapi.onrender.com/rentNest/api/searchCapitalHousesByFilter?'
               'location=$location'
               '&size=$size'
               '&price=$price'

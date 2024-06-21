@@ -7,7 +7,7 @@ class ApiCap{
     List<Map<dynamic, dynamic>> gridMap =[];
     try {
       final response = await http.get(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/getAllCapitalHouses'),
+        Uri.parse('https://rentnestapi.onrender.com/rentNest/api/getAllCapitalHouses'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -36,7 +36,7 @@ class ApiCap{
     List<Map<dynamic, dynamic>> userHouses =[{}];
     try {
       final response = await http.get(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/getUserCapitalHouse/$userId'),
+        Uri.parse('https://rentnestapi.onrender.com/rentNest/api/getUserCapitalHouse/$userId'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -71,7 +71,7 @@ class ApiCap{
     String responseBody = "";
     try {
       final response = await http.delete(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/deleteCapitalHouse/$houseId'),
+        Uri.parse('https://rentnestapi.onrender.com/rentNest/api/deleteCapitalHouse/$houseId'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

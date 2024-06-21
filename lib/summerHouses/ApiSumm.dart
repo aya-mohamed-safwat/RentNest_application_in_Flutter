@@ -7,7 +7,7 @@ class ApiSumm{
     List<Map<dynamic, dynamic>> gridMap =[];
     try {
       final response = await http.get(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/getAllSummerHouses'),
+        Uri.parse('https://rentnestapi.onrender.com/rentNest/api/getAllSummerHouses'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -36,7 +36,7 @@ class ApiSumm{
     List<Map<dynamic, dynamic>> userHouses =[{}];
     try {
       final response = await http.post(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/getUserSummerHouse/$userId'),
+        Uri.parse('https://rentnestapi.onrender.com/rentNest/api/getUserSummerHouse/$userId'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -72,7 +72,7 @@ class ApiSumm{
     String responseBody = "";
     try {
       final response = await http.delete(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/deleteSummerHouse/$houseId'),
+        Uri.parse('https://rentnestapi.onrender.com/rentNest/api/deleteSummerHouse/$houseId'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

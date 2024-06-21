@@ -59,7 +59,7 @@ class _ImagePickerDemoState extends State<ImagePickerDemoSumm> {
       , int bedRoom ,String description , int userId ,BuildContext context ) async {
     try {
       final response = await http.post(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/addSummerHouse/$userId'),
+        Uri.parse('https://rentnestapi.onrender.com/rentNest/api/addSummerHouse/$userId'),
         body: jsonEncode(<String, dynamic>{
           "location": location,
           "size": size,
@@ -106,7 +106,7 @@ class _ImagePickerDemoState extends State<ImagePickerDemoSumm> {
       Uint8List byte = bytes[i];
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://rentnest.onrender.com/image'),);
+        Uri.parse('https://rentnestapi.onrender.com/image'),);
 
       var multipartRequest = http.MultipartFile(
           'image',

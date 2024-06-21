@@ -23,7 +23,7 @@ class ImageAPI {
 Future<List<dynamic>> fetchImageById(int entityId,String entityType) async {
   List<dynamic> images=[];
   try {
-    String apiUrl = 'https://rentnest.onrender.com/image/viewByEntityId/$entityId/$entityType';
+    String apiUrl = 'https://rentnestapi.onrender.com/image/viewByEntityId/$entityId/$entityType';
 
     final response = await http.get(Uri.parse(apiUrl));
 
@@ -44,7 +44,7 @@ Future<List<dynamic>> fetchImageById(int entityId,String entityType) async {
   Future<List<dynamic>> fetchImageByEntityIdAndUserId(int entityId,String entityType, int userId) async {
     List<dynamic> images=[];
     try {
-      String apiUrl = 'https://rentnest.onrender.com/image/viewByEntityIdAndUserId/$entityId/$entityType/$userId';
+      String apiUrl = 'https://rentnestapi.onrender.com/image/viewByEntityIdAndUserId/$entityId/$entityType/$userId';
 
       final response = await http.get(Uri.parse(apiUrl));
 
@@ -66,7 +66,7 @@ Future<List<dynamic>> fetchImageById(int entityId,String entityType) async {
     String responseBody = "";
     try {
       final response = await http.delete(
-        Uri.parse('https://rentnest.onrender.com/image/deleteImage/$imageName'),
+        Uri.parse('https://rentnestapi.onrender.com/image/deleteImage/$imageName'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

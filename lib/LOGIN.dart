@@ -42,7 +42,7 @@ class login extends StatefulWidget {
       if (formKey.currentState!.validate()) {
         try {
           final response = await http.post(
-            Uri.parse('https://rentnest.onrender.com/rentNest/api/login'),
+            Uri.parse('https://rentnestapi.onrender.com/rentNest/api/login'),
             body: jsonEncode(<String, String>{
               'email': email,
               'password': password,

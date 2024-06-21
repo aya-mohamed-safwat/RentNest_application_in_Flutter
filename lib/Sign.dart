@@ -41,7 +41,7 @@ class _signState extends State<sign> {
         if (formKey.currentState!.validate()) {
           try {
             final response = await http.post(
-              Uri.parse('https://rentnest.onrender.com/rentNest/api/signUp'),
+              Uri.parse('https://rentnestapi.onrender.com/rentNest/api/signUp'),
               body: jsonEncode(<String, String>{
                 "name": name,
                 "email": email,

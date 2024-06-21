@@ -91,7 +91,7 @@ class _EditHouseUniState extends State<EditHouseUni> {
       , int bedRoom ,String description , int houseId ,BuildContext context ) async {
     try {
       final response = await http.put(
-        Uri.parse('https://rentnest.onrender.com/rentNest/api/updateUniversalHouse/$houseId'),
+        Uri.parse('https://rentnestapi.onrender.com/rentNest/api/updateUniversalHouse/$houseId'),
         body: jsonEncode(<String, dynamic>{
           "location": location,
           "size": size,

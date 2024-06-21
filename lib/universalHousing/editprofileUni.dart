@@ -41,7 +41,7 @@ class _ProfileState extends State<editprofileUni> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('https://rentnest.onrender.com/image'),);
+      Uri.parse('https://rentnestapi.onrender.com/image'),);
 
     var multipartRequest = http.MultipartFile(
         'image',
@@ -96,7 +96,7 @@ class _ProfileState extends State<editprofileUni> {
 void editProfile(String name , String email,  String number ,String password ,dynamic userId, BuildContext context) async {
     try {
        final response = await http.put(
-         Uri.parse('https://rentnest.onrender.com/rentNest/api/updateUser/'
+         Uri.parse('https://rentnestapi.onrender.com/rentNest/api/updateUser/'
              '$userId'),
          body: jsonEncode(<String, String>{
            "name": name,
