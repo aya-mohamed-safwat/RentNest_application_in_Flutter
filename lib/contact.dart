@@ -38,7 +38,6 @@ class contact extends StatelessWidget {
                 Divider(),
                 IconWithText(icon: Icons.location_on, text: 'M.E.T Academy', color: Colors.brown),
                 SizedBox(height: 20.0),
-
               ],
             ),
           ),
@@ -47,14 +46,11 @@ class contact extends StatelessWidget {
     );
   }
 }
-
 class IconWithText extends StatelessWidget {
   final IconData icon;
   final String text;
   final Color color;
-
   IconWithText({required this.icon, required this.text, required this.color});
-
   @override
   Widget build(BuildContext context) {
     return Row(

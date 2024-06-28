@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:rent_nest_flutter/houses/Api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
+import 'Profile.dart';
 import 'details.dart';
 import '../ImageAPI.dart';
 
@@ -126,6 +126,50 @@ class _HomeState extends State<Home> {
     }
   }
   @override
+  void dispose() {
+    pageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Report"),
+          content: Text("What do you want to report ?"),
+          actions: [
+            TextButton(
+              child: Text("User"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Your report is being processed"),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              },
+            ),
+            TextButton(
+              child: Text("Property"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Your report is being processed"),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  @override
   Widget build(BuildContext context) {
 
 
@@ -171,6 +215,7 @@ class _HomeState extends State<Home> {
                             SnackBar(
                               content:
                               Text(texts[index]),
+                              duration: Duration(seconds: 1),
                             ),
                           );
                         },
@@ -288,6 +333,14 @@ class _HomeState extends State<Home> {
                                   },
                                   icon: Icon(
                                     CupertinoIcons.ellipsis_circle,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    showAlertDialog(context);
+                                  },
+                                  icon: Icon(
+                                    CupertinoIcons.xmark_shield,
                                   ),
                                 ),
                               ],

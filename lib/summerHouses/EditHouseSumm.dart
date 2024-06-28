@@ -49,7 +49,7 @@ class _EditHouseSummState extends State<EditHouseSumm> {
     });
   }
 
-  List<String> locations = [ 'Sharm El Sheik', 'Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
+  List<String> locations = [ 'Sharm El Sheik','new mansoura','marsa matrouh','north cost','Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
   String? selectedLocation = location;
   bool _lights = true;
 
@@ -91,7 +91,7 @@ class _EditHouseSummState extends State<EditHouseSumm> {
       , int bedRoom ,String description , int houseId ,BuildContext context ) async {
     try {
       final response = await http.put(
-        Uri.parse('https://rentnestapi.onrender.com/rentNest/api/updateSummerHouse/$houseId'),
+        Uri.parse('https://rentnestapiD.onrender.com/rentNest/api/updateSummerHouse/$houseId'),
         body: jsonEncode(<String, dynamic>{
           "location": location,
           "size": size,

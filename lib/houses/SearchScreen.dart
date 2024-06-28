@@ -15,7 +15,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   List<Map<dynamic, dynamic>> searchHouses =[];
 
-  List<String> locations = [ 'Cairo', 'Giza', 'Luxor','Sharm El Sheik', 'Tanta'];
+  List<String> locations = [ 'Cairo', 'new alamein','galala','15 may','dakahlia','aswan','Giza', 'Luxor','benha','Sharm El Sheik', 'Tanta'];
   String? selectedLocation = 'Cairo';
 
   double size = 0.0 ;

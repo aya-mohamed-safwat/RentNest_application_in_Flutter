@@ -9,6 +9,8 @@ import 'Add_itemCap.dart';
 import 'ApiCap.dart';
 import 'EditHouseCap.dart';
 import 'editprofileCap.dart';
+import 'HomeCap.dart';
+
 
 String imageBytesCap="";
 List<dynamic> ImagesForEditingCap=[];
@@ -134,7 +136,9 @@ class _ProfileState extends State<ProfileCap> {
                   padding: const EdgeInsets.only(
                     top: 20,
                   ),
-                  child: IconButton(onPressed: (){
+                  child: IconButton(onPressed: (){Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeCap()));
 
                   },
                       icon: const Icon(Icons.arrow_back),

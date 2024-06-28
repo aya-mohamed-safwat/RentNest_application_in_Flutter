@@ -9,6 +9,7 @@ import 'Api.dart';
 import 'EditHouse.dart';
 import '../ImageAPI.dart';
 import 'editprofile.dart';
+import 'package:rent_nest_flutter/houses/Home.dart';
 
 String imageBytes="";
 List<dynamic> ImagesForEditing=[];
@@ -134,7 +135,9 @@ class _ProfileState extends State<Profile> {
                   padding: const EdgeInsets.only(
                     top: 20,
                   ),
-                  child: IconButton(onPressed: (){
+                  child: IconButton(onPressed: (){ Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Home()));
 
                   },
                       icon: const Icon(Icons.arrow_back),

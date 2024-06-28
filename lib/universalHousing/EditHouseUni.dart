@@ -49,7 +49,7 @@ class _EditHouseUniState extends State<EditHouseUni> {
     });
   }
 
-  List<String> locations = [ 'Sharm El Sheik', 'Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
+  List<String> locations = [ 'mansoura','galala','new alamein','15 may', 'gamasa', 'cairo', 'Alex', 'kafr alshaihk','banha','tanta','sinai','suez'];
   String? selectedLocation = location;
   bool _lights = true;
 

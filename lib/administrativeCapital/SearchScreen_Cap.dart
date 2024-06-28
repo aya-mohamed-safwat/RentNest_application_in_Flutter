@@ -14,8 +14,8 @@ class SearchScreenCap extends StatefulWidget {
 
 class _SearchScreenCapState extends State<SearchScreenCap> {
   List<Map<dynamic, dynamic>> searchHouses =[];
-  List<String> locations = [ 'الحي الاول R1', 'الحي الثاني R2', 'الحي الثالث R3', 'الحى الرابع R4','الحي االخامس R5', 'الحي السادس R6', 'الحي السابع R7', 'الحى الثامن R8'];
-  String? selectedLocation = 'الحي الاول R1';
+  List<String> locations = [ 'R1', ' R2', ' R3', ' R4','R5', 'R6', 'R7', 'R8'];
+  String? selectedLocation = 'R1';
 
   double size = 0.0 ;
   double price =0.0;

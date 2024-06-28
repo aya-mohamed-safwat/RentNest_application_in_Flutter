@@ -9,7 +9,7 @@ import 'Add_itemUni.dart';
 import 'ApiUni.dart';
 import 'EditHouseUni.dart';
 import 'editprofileUni.dart';
-
+import 'HomeUni.dart';
 String imageBytesUni="";
 List<dynamic> ImagesForEditingUni=[];
 
@@ -136,7 +136,9 @@ class _ProfileState extends State<ProfileUni> {
                   padding: const EdgeInsets.only(
                     top: 20,
                   ),
-                  child: IconButton(onPressed: (){
+                  child: IconButton(onPressed: (){ Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeUni()));
 
                   },
                       icon: const Icon(Icons.arrow_back),
@@ -157,7 +159,6 @@ class _ProfileState extends State<ProfileUni> {
                     ? NetworkImage(imageBytesUni)
                     : AssetImage('Photos/profilelogo.png') as ImageProvider<Object>,
               ),
-
             ],
           ),
             ),

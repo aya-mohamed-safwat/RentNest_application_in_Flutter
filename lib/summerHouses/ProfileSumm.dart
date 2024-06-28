@@ -7,7 +7,7 @@ import '../ImageAPI.dart';
 import '../LOGIN.dart';
 import 'Add_itemSumm.dart';
 import 'ApiSumm.dart';
-
+import 'HomeSumm.dart';
 import 'EditHouseSumm.dart';
 import 'editprofileSumm.dart';
 
@@ -135,7 +135,9 @@ class _ProfileState extends State<ProfileSumm> {
                   padding: const EdgeInsets.only(
                     top: 20,
                   ),
-                  child: IconButton(onPressed: (){
+                  child: IconButton(onPressed: (){Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeSumm()));
 
                   },
                       icon: const Icon(Icons.arrow_back),

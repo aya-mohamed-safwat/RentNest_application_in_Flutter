@@ -13,7 +13,7 @@ class SearchScreenSumm extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreenSumm> {
   List<Map<dynamic, dynamic>> searchHouses =[];
 
-  List<String> locations = [ 'Sharm El Sheik', 'Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
+  List<String> locations = [ 'Sharm El Sheik','new mansoura','marsa matrouh','north cost','Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
   String? selectedLocation = 'Sharm El Sheik';
 
   double size = 0.0 ;

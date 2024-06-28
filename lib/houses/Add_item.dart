@@ -21,8 +21,8 @@ class ImagePickerDemo extends StatefulWidget {
 
 class _ImagePickerDemoState extends State<ImagePickerDemo> {
 
-  List<String> locations = [ 'Sharm El Sheik', 'Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
-  String? selectedLocation = 'Sharm El Sheik';
+  List<String> locations = [ 'Cairo', 'new alamein','galala','15 may','dakahlia','aswan','Giza', 'Luxor','benha','Sharm El Sheik', 'Tanta'];
+  String? selectedLocation = 'Cairo';
   bool _lights = true;
 
   final TextEditingController _price = TextEditingController();

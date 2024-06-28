@@ -21,7 +21,7 @@ class ImagePickerDemoSumm extends StatefulWidget {
 
 class _ImagePickerDemoState extends State<ImagePickerDemoSumm> {
 
-  List<String> locations = [ 'Sharm El Sheik', 'Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
+  List<String> locations = [ 'Sharm El Sheik','new mansoura','marsa matrouh','north cost','Ras El Bar', 'Dahb', 'Alex', 'paltem', 'Marina delta'];
   String? selectedLocation = 'Sharm El Sheik';
   bool _lights = true;
 
